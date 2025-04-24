@@ -1,0 +1,115 @@
+:root {
+    --pink: #e84393;
+  }
+  
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    outline: none;
+    border: none;
+    text-decoration: none;
+    text-transform: capitalize;
+    transition: .2s linear;
+    
+  }
+
+  html {
+    font-size: 62.5%;
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+    overflow-x: hidden;
+    
+  }
+  
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    padding: 2rem 9%;
+    display: flex;
+
+  }
+
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    padding: 2rem 9%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1000;
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.1);
+  }
+
+  header .navbar a {
+    font-size: 2rem;
+    padding: 0 1.5rem;
+    color: #f38545;
+  }
+  
+  header .navbar a:hover {
+    color: var(--pink);
+  }
+
+  .icons a img {
+    width: 3rem; 
+    height: auto; 
+    vertical-align: middle; /
+  }
+  
+  .icons a {
+    display: inline-block; 
+  }
+
+  body {
+    padding-top: 13rem; 
+  }
+
+  form {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    max-width: 600px;     
+    width: 90%;           
+    margin: 0 auto; 
+  }
+
+  input[type="text"] {
+    flex: 1;
+    padding: 0.5rem;
+    font-size: 1.5rem;
+    border: 1px solid #f11db8;
+    background: hsl(340, 87%, 91%); 
+    border-radius: 0.25rem;
+  }
+  
+  button {
+    padding: 0.5rem 1rem;
+    font-size: 1.3rem;
+    background: #e84393;
+    color: #ffffff;
+    border-radius: 0.25rem;
+    cursor: pointer;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  li {
+    background: #e84393;
+    color: #fff;
+    padding: 0.4rem 0.8rem;
+    border-radius: 1rem;
+  }
