@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body style="background-image: url('{{ url_for('static', filename='back.jpg') }}'); background-size: cover;">
+    <div class="box">
+        <img src="{{ url_for('static', filename='user.png') }}" class="user">
+        <h1>Register</h1>
+        <form method="POST" action="/register">
+            <p>Username</p>
+            <input type="text" name="username" required>
+
+            <p>Email</p>
+            <input type="email" name="email" required>
+
+            <p>Password</p>
+            <input type="password" name="password" required>
+
+            <input type="submit" value="Register">
+            <br><br>
+            <a href="/">Already have an account? Login</a>
+        </form>
+    </div>
+</body>
+</html>
