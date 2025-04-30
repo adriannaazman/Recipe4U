@@ -1,11 +1,14 @@
-body {
+/* Apply full-page background */
+html, body {
     margin: 0;
     padding: 0;
+    height: 100%;
     font-family: Arial, sans-serif;
-    background: url('background.jpg') no-repeat center center fixed;
+    background: url("/static/back.jpeg") no-repeat center center fixed;
     background-size: cover;
 }
 
+/* Shared container style */
 .container, .form-container {
     background: rgba(255, 255, 255, 0.9);
     max-width: 400px;
@@ -16,23 +19,25 @@ body {
     box-shadow: 0 0 10px rgba(0,0,0,0.2);
 }
 
+/* Headings */
 h1, h2 {
     margin-bottom: 20px;
     color: #333;
 }
 
+/* Form input styles */
 input[type="text"],
 input[type="email"],
 input[type="password"] {
     width: 90%;
     padding: 12px;
     margin: 8px 0;
-    display: inline-block;
     border: 1px solid #ccc;
     border-radius: 8px;
     box-sizing: border-box;
 }
 
+/* Submit button */
 input[type="submit"] {
     width: 95%;
     background-color: #4CAF50;
@@ -53,6 +58,7 @@ a {
     text-decoration: none;
 }
 
+/* Alert messages */
 .alert.success {
     background-color: #d4edda;
     color: #155724;
@@ -67,4 +73,44 @@ a {
     padding: 10px;
     margin-bottom: 10px;
     border-radius: 5px;
+}
+
+/* Home page custom section */
+.home-page {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.overlay {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    text-align: center;
+}
+
+.home-buttons .btn {
+    display: inline-block;
+    padding: 12px 25px;
+    margin: 10px;
+    background-color: #ff7f50;
+    color: white;
+    text-decoration: none;
+    font-size: 1em;
+    border-radius: 30px;
+    transition: background-color 0.3s ease;
+}
+
+.home-buttons .btn:hover {
+    background-color: #ff4500;
+}
+
+.home-buttons .logout {
+    background-color: #f44336;
+}
+
+.home-buttons .logout:hover {
+    background-color: #d32f2f;
 }
