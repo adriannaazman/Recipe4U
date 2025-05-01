@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Weekly Meal Plan Mockup</title>
+</head>
+<body>
+    <h1>Enter Your Ingredients</h1>
+    <form method="POST">
+        <input type="text" name="ingredients" placeholder="e.g. egg, tomato, cheese">
+        <button type="submit">Generate Meal Plan</button>
+    </form>
+
+    {% if meal_plan %}
+        <h2>Your Weekly Plan</h2>
+        {% for day, meals in meal_plan.items() %}
+            <h3>{{ day }}</h3>
+            <ul>
+                {% for meal, recipe in meals.items() %}
+                    <li><strong>{{ meal }}:</strong> {{ recipe }}</li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+    {% endif %}
+</body>
+</html>
