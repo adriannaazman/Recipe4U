@@ -4,9 +4,8 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'  # Needed for flash messages
+app.secret_key = 'your_secret_key'  
 
-# Correct path to database
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 db_path = os.path.join(BASE_DIR, "database", "user.db")
 
@@ -100,6 +99,10 @@ def forgot_password():
 @app.route('/home')
 def home():
     return render_template('home.html')
+@app.route('/logout')
+def logout():
+    return render_template('logout.html')
+
 
 if __name__ == '__main__':
     create_db()
