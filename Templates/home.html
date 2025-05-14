@@ -4,6 +4,7 @@
     <title>Home - Recipe4U</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
+<<<<<<< HEAD
         body {
             background-image: url('{{ url_for('static', filename='back.jpeg') }}');
             background-size: cover;
@@ -54,27 +55,55 @@
             text-decoration: none;
             border-radius: 10px;
             font-weight: bold;
+=======
+        .home-container {
+            max-width: 800px;
+            margin: auto;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+        }
+
+        .search-bar {
+            margin-top: 20px;
+        }
+
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #aaa;
+            border-radius: 10px;
+>>>>>>> d88ff83cc0e927385632b320e01ef010375a1f8b
         }
 
         .recipes {
             display: flex;
             gap: 20px;
             flex-wrap: wrap;
+<<<<<<< HEAD
             justify-content: center;
             margin-top: 30px;
+=======
+>>>>>>> d88ff83cc0e927385632b320e01ef010375a1f8b
         }
 
         .recipe-card {
             background-color: #fff8f0;
             padding: 15px;
             border-radius: 12px;
+<<<<<<< HEAD
             width: 40%;
+=======
+            width: 45%;
+>>>>>>> d88ff83cc0e927385632b320e01ef010375a1f8b
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
         }
 
         .recipe-card h4 {
             margin-top: 0;
         }
+<<<<<<< HEAD
     </style>
 </head>
 <body>
@@ -100,10 +129,49 @@
             </div>
             <div class="recipe-card">
                 <h4>Fresh Avocado Salad</h4>
+=======
+
+        .logout-btn {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #ff4d4d;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            float: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="home-container">
+        <a href="/logout" class="logout-btn">Logout</a>
+        <h2>~Welcome To Recipe4U~</h2>
+        <p>Ready to explore delicious recipes today?</p>
+
+        
+        <div class="search-bar">
+            <form action="#" method="GET">
+                <input type="text" name="search" placeholder="Search recipes by name, ingredients, etc. 🔍">
+            </form>
+        </div>
+
+        
+        <h3>Featured Recipes</h3>
+        <div class="recipes">
+            <div class="recipe-card">
+                <h4> Spaghetti Bolognese</h4>
+                <p>A classic Italian pasta dish made with rich tomato and meat sauce.</p>
+            </div>
+            <div class="recipe-card">
+                <h4> Fresh Avocado Salad</h4>
+>>>>>>> d88ff83cc0e927385632b320e01ef010375a1f8b
                 <p>Healthy and refreshing, made with avocado, cucumber, and lime.</p>
             </div>
         </div>
     </div>
+<<<<<<< HEAD
 
+=======
+>>>>>>> d88ff83cc0e927385632b320e01ef010375a1f8b
 </body>
 </html>
