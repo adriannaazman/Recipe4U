@@ -106,7 +106,6 @@ def forgot_password():
 
 @app.route('/home')
 def home():
-<<<<<<< HEAD
     if 'user_name' in session:
         return render_template('home.html', user=session['user_name'])
     else:
@@ -123,11 +122,7 @@ def show_ingredients():
     return render_template("ingredients.html", ingredients=ingredients)
 
 
-
-
-=======
     return render_template('home.html')
->>>>>>> d88ff83cc0e927385632b320e01ef010375a1f8b
 @app.route('/logout')
 def logout():
     return render_template('logout.html')
