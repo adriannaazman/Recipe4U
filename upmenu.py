@@ -7,12 +7,31 @@ app = Flask(__name__)
 def init_db():
     conn = sqlite3.connect('ingredients.db')
     cursor = conn.cursor()
+
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS ingredients (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL
         )
     ''')
+
+  
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS comments (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            recipe_id INTEGER NOT NULL,
+            content TEXT NOT NULL
+        )
+    ''')
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS ratings (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            recipe_id INTEGER NOT NULL,
+            score INTEGER NOT NULL
+        )
+    ''')
+
     conn.commit()
     conn.close()
 
@@ -51,8 +70,32 @@ def index():
         matching = [r for r in recipes if any(i in user_ingredients for i in r["ingredients"])]
         meal_plan = generate_meal_plan(matching)
 
-    return render_template("indexup.html", ingredients=ingredients, meal_plan=meal_plan, matched_recipes=matched_recipes)
+    conn = sqlite3.connect("ingredients.db")
+    c = conn.cursor()
 
+    recipe_comments = {}
+    recipe_ratings = {}
+
+    for recipe in recipes:
+        recipe_id = recipe["id"]
+
+        c.execute("SELECT content FROM comments WHERE recipe_id = ?", (recipe_id,))
+        comments = c.fetchall()
+        recipe_comments[recipe_id] = [comment[0] for comment in comments]
+
+        c.execute("SELECT AVG(score) FROM ratings WHERE recipe_id = ?", (recipe_id,))
+        avg = c.fetchone()[0]
+        recipe_ratings[recipe_id] = round(avg, 1) if avg else "No ratings yet"
+
+    conn.close()
+
+    return render_template("indexup.html",
+        ingredients=ingredients,
+        meal_plan=meal_plan,
+        matched_recipes=matched_recipes,
+        recipe_comments=recipe_comments,
+        recipe_ratings=recipe_ratings
+    )
 @app.route("/add", methods=["POST"])
 def add():
     name = request.form["ingredient"]
@@ -85,6 +128,26 @@ def generate_meal_plan(recipes):
             plan[day][meal] = selected[i]["name"] if i < len(selected) else "No Recipe"
             i += 1
     return plan
+
+@app.route("/comment/<int:recipe_id>", methods=["POST"])
+def comment(recipe_id):
+    content = request.form["content"]
+    conn = sqlite3.connect("ingredients.db")
+    c = conn.cursor()
+    c.execute("INSERT INTO comments (recipe_id, content) VALUES (?, ?)", (recipe_id, content))
+    conn.commit()
+    conn.close()
+    return redirect("/")
+
+@app.route("/rate/<int:recipe_id>", methods=["POST"])
+def rate(recipe_id):
+    score = int(request.form["score"])
+    conn = sqlite3.connect("ingredients.db")
+    c = conn.cursor()
+    c.execute("INSERT INTO ratings (recipe_id, score) VALUES (?, ?)", (recipe_id, score))
+    conn.commit()
+    conn.close()
+    return redirect("/")
 
 if __name__ == "__main__":
     init_db()
