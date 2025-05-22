@@ -8,7 +8,43 @@ html, body {
     background-size: cover;
 }
 
-/* Shared container style */
+
+/* Navbar and Logo Section */
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 10px 30px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.logo img {
+    height: 50px;
+    border-radius: 10px;
+}
+
+.nav-links a {
+    margin: 0 15px;
+    color: #333;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 20px;
+    transition: background-color 0.3s;
+}
+
+.nav-links a:hover {
+    background-color: #ff7f50;
+    color: white;
+}
+
+/* Shared container style  */
+
 .container, .form-container {
     background: rgba(255, 255, 255, 0.9);
     max-width: 400px;
@@ -75,7 +111,9 @@ a {
     border-radius: 5px;
 }
 
+
 /* Home page custom section */
+
 .home-page {
     height: 100vh;
     display: flex;
@@ -116,6 +154,24 @@ a {
     background-color: #d32f2f;
 }
 
+/* New class for health profile button - Added Here */
+.btn-health-profile { 
+    display: inline-block;
+    margin-top: 20px; /* Adjust as needed */
+    padding: 12px 25px;
+    background-color: #007bff; /* Example color for the button */
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: bold;
+    margin-right: 10px; /* Add some space if there are other buttons */
+    transition: background-color 0.3s ease;
+}
+
+.btn-health-profile:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+}
+
 /* View Ingredients button style */
 .view-ingredients-btn {
     display: inline-block;
@@ -135,32 +191,149 @@ a {
     background-color: #ff4500;
 }
 
-/* Ingredients list/table style */
-.ingredient-list {
-    margin: 20px auto;
-    width: 90%;
-    max-width: 600px;
-    background-color: #fff;
-    border-radius: 15px;
-    padding: 20px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.1);
-    text-align: left;
+/* Fixing Ingredients Page Display  */
+
+.ingredient-page-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    min-height: 100vh;
 }
 
-.ingredient-list ul {
-    list-style-type: none;
-    padding: 0;
+.ingredient-list {
+    background-color: rgba(255, 250, 240, 0.9); /* Light background (off-white) */
+    padding: 30px;
+    border-radius: 20px;
+    max-width: 700px;
+    width: 100%;
+    color: #333;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
 }
 
 .ingredient-list li {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+    border-bottom: 1px solid #ccc;
 }
 
 .ingredient-list li:last-child {
     border-bottom: none;
 }
 
-.ingredient-list strong {
+/* Ingredient Detail & Cart Styling */
+
+
+.page-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 20px;
+    min-height: 100vh;
+}
+
+.content-box {
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    max-width: 600px;
+    width: 90%;
     color: #333;
+}
+
+.content-box h1 {
+    margin-bottom: 20px;
+    color: #333;
+    text-align: center;
+}
+
+.content-box ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.content-box li {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    font-size: 16px;
+}
+
+.content-box li:last-child {
+    border-bottom: none;
+}
+
+.content-box strong {
+    color: #333;
+}
+
+.btn-green {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 22px;
+    border: none;
+    border-radius: 25px;
+    margin: 10px auto;
+    font-size: 15px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+    text-align: center;
+}
+
+.btn-green:hover {
+    background-color: #388e3c;
+}
+/* Health Profile Form Styling */
+
+
+.health-form-container {
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 30px;
+    border-radius: 20px;
+    max-width: 500px;
+    margin: 60px auto;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    text-align: center;
+}
+
+.health-form-container h2 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.health-form-container input[type="number"],
+.health-form-container select {
+    width: 90%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+.health-form-container input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px;
+    width: 95%;
+    margin-top: 15px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.health-form-container input[type="submit"]:hover {
+    background-color: #388e3c;
+}
+
+
+/* Health Profile Result Page   */
+
+.profile-result-container {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 20px;
 }

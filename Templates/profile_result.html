@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Health Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Your Health Result</h2>
+        <p><strong>BMI:</strong> {{ bmi }}</p>
+        <p><strong>Recommended Calories per Day:</strong> {{ calories }} kcal</p>
+        <a href="{{ url_for('profile') }}">Edit Info</a> |
+        <a href="{{ url_for('home') }}">Back to Home</a>
+    </div>
+</body>
+</html>

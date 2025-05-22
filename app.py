@@ -3,30 +3,36 @@ import sqlite3
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from werkzeug.security import generate_password_hash, check_password_hash
 
-
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'  
+app.secret_key = 'your_secret_key'
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-db_path = os.path.join(BASE_DIR, "database", "user.db")
+db_path = os.path.join(BASE_DIR, "database", "main.db")
 
 def create_db():
-    if not os.path.exists(db_path):
-        conn = sqlite3.connect(db_path)
-        c = conn.cursor()
-        c.execute('''
-            CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
-                email TEXT NOT NULL UNIQUE,
-                password TEXT NOT NULL
-            )
-        ''')
-        conn.commit()
-        conn.close()
-        print("Database and users table created successfully!")
-    else:
-        print("Database already exists.")
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            email TEXT NOT NULL UNIQUE,
+            password TEXT NOT NULL
+        )
+    ''')
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS ingredients (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL UNIQUE,
+            option TEXT,
+            quantity INTEGER DEFAULT 0
+        )
+    ''')
+    conn.commit()
+    conn.close()
+
+create_db()
+print("✅ Database and tables created successfully.")
 
 @app.route('/')
 def index():
@@ -38,25 +44,22 @@ def register():
         name = request.form['name']
         email = request.form['email']
         password = request.form['password']
-
-        # ✅ Hash the password
         hashed_password = generate_password_hash(password)
 
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
 
         try:
-            # ✅ Save hashed password
-            cursor.execute("INSERT INTO users (name, email, password) VALUES (?, ?, ?)", (name, email, hashed_password))
+            cursor.execute("INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
+                           (name, email, hashed_password))
             conn.commit()
             flash("✅ Registered successfully! Please login.", "success")
-            return redirect('/login')
+            return redirect(url_for('login'))
         except sqlite3.IntegrityError:
             flash("❌ Email already exists!", "danger")
         finally:
             conn.close()
     return render_template('register.html')
-
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -70,39 +73,20 @@ def login():
         user = c.fetchone()
         conn.close()
 
-        if user and check_password_hash(user[3], password):  # index 3 = hashed password
+        if user and check_password_hash(user[3], password):
             session['user_id'] = user[0]
             session['user_name'] = user[1]
             flash("✅ Login successful!", "success")
-            return redirect('/home')  # this is a route, not a file
+            return redirect(url_for('home'))
         else:
             flash("❌ Incorrect email or password.", "danger")
-            return redirect('/login')
     return render_template('login.html')
 
-
-
-@app.route('/forgot_password', methods=['GET', 'POST'])
-def forgot_password():
-    if request.method == 'POST':
-        email = request.form['email']
-        new_password = request.form['new_password']
-
-        conn = sqlite3.connect(db_path)
-        c = conn.cursor()
-        c.execute("SELECT * FROM users WHERE email=?", (email,))
-        user = c.fetchone()
-
-        if user:
-            c.execute("UPDATE users SET password=? WHERE email=?", (new_password, email))
-            conn.commit()
-            flash("✅ Password updated. Please log in.", "success")
-            return redirect(url_for('login'))
-        else:
-            flash("❌ Email not found.", "danger")
-            return redirect(url_for('forgot_password'))
-        conn.close()
-    return render_template('forgot_password.html')
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash("You have been logged out.", "info")
+    return redirect(url_for('login'))
 
 @app.route('/home')
 def home():
@@ -110,23 +94,190 @@ def home():
         return render_template('home.html', user=session['user_name'])
     else:
         flash("⚠️ Please login first.", "warning")
-        return redirect('/login')
-    
+        return redirect(url_for('login'))
+
 @app.route('/ingredients')
 def show_ingredients():
-    conn = sqlite3.connect("database/ingredients.db")
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM ingredients")
-    ingredients = cursor.fetchall()
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    c.execute("SELECT * FROM ingredients ORDER BY name")
+    ingredients = c.fetchall()
     conn.close()
     return render_template("ingredients.html", ingredients=ingredients)
 
+@app.route('/ingredients/<int:ingredient_id>')
+def ingredient_detail(ingredient_id):
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+    c.execute("SELECT * FROM ingredients WHERE id=?", (ingredient_id,))
+    ingredient = c.fetchone()
+    conn.close()
 
-    return render_template('home.html')
-@app.route('/logout')
-def logout():
-    return render_template('logout.html')
+    if not ingredient:
+        flash("Ingredient not found.", "danger")
+        return redirect(url_for('show_ingredients'))
 
+    return render_template('ingredient_detail.html', ingredient=ingredient)
+
+@app.route('/add_ingredient', methods=['GET', 'POST'])
+def add_ingredient():
+    if 'user_name' not in session:
+        flash("Please login to add ingredients.", "warning")
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        name = request.form['name'].strip()
+        quantity = request.form['quantity'].strip()
+        option = request.form['option'].strip() if 'option' in request.form else None
+
+        if not name or not quantity:
+            flash("Please enter all fields.", "danger")
+            return redirect(url_for('add_ingredient'))
+
+        conn = sqlite3.connect(db_path)
+        c = conn.cursor()
+        try:
+            c.execute("INSERT INTO ingredients (name, option, quantity) VALUES (?, ?, ?)",
+                      (name, option, quantity))
+            conn.commit()
+            flash(f"✅ Ingredient '{name}' added successfully!", "success")
+            return redirect(url_for('show_ingredients'))
+        except sqlite3.IntegrityError:
+            flash("❌ Ingredient already exists!", "danger")
+        finally:
+            conn.close()
+
+    return render_template('add_ingredient.html')
+
+@app.route('/add_to_cart/<int:ingredient_id>')
+def add_to_cart(ingredient_id):
+    if 'cart' not in session:
+        session['cart'] = {}
+
+    cart = session['cart']
+
+    if str(ingredient_id) in cart:
+        cart[str(ingredient_id)] += 1
+    else:
+        cart[str(ingredient_id)] = 1
+
+    session['cart'] = cart
+    flash("🛒 Added to cart!", "success")
+    return redirect(url_for('show_ingredients'))
+
+@app.route('/cart')
+def view_cart():
+    if 'cart' not in session or len(session['cart']) == 0:
+        flash("🛒 Cart is empty.", "info")
+        return render_template('cart.html', cart_items=[], total=0)
+
+    cart = session['cart']
+    ids = tuple(int(k) for k in cart.keys())
+
+    placeholders = ",".join("?" * len(ids))
+    query = f"SELECT * FROM ingredients WHERE id IN ({placeholders})"
+
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+    c.execute(query, ids)
+    ingredients = c.fetchall()
+    conn.close()
+
+    cart_items = []
+    total_items = 0
+    for ing in ingredients:
+        quantity_in_cart = cart[str(ing[0])]
+        cart_items.append({
+            "id": ing[0],
+            "name": ing[1],
+            "option": ing[2] if ing[2] else "No option",
+            "quantity": ing[3],
+            "count": quantity_in_cart
+        })
+        total_items += quantity_in_cart
+
+    return render_template('cart.html', cart_items=cart_items, total=total_items)
+
+@app.route('/clear_cart')
+def clear_cart():
+    session.pop('cart', None)
+    flash("🗑️ Cart cleared.", "info")
+    return redirect(url_for('show_ingredients'))
+
+@app.route('/profile', methods=['GET', 'POST'])
+def profile():
+    if request.method == 'POST':
+        age = int(request.form['age'])
+        weight = float(request.form['weight'])
+        height = float(request.form['height'])
+        activity = request.form['activity']
+
+        # BMI Calculation
+        bmi = round(weight / ((height / 100) ** 2), 2)
+
+        if activity == 'low':
+            calories = weight * 25
+        elif activity == 'medium':
+            calories = weight * 30
+        else:
+            calories = weight * 35
+
+        return render_template('profile_result.html', bmi=bmi, calories=calories)
+
+    return render_template('profile_form.html')
+
+@app.route('/health_profile', methods=['GET', 'POST'])
+def health_profile():
+    if request.method == 'POST':
+        age = request.form['age']
+        weight = request.form['weight']
+        height = request.form['height']
+        activity_level = request.form['activity_level']
+
+        # Save to DB
+        conn = sqlite3.connect('main.db')
+        cursor = conn.cursor()
+        cursor.execute('''
+            INSERT INTO health_profile (user_id, age, weight, height, activity_level)
+            VALUES (?, ?, ?, ?, ?)
+        ''', (session['user_id'], age, weight, height, activity_level))
+        conn.commit()
+        conn.close()
+
+        session['health_filled'] = True  # Mark as done
+        return redirect(url_for('profile_result'))
+
+
+    return render_template('health_profile.html')
+
+@app.route('/profile_result')
+def profile_result():
+    conn = sqlite3.connect('main.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT age, weight, height, activity_level FROM health_profile WHERE user_id = ?', (session['user_id'],))
+    data = cursor.fetchone()
+    conn.close()
+
+    if data:
+        age, weight, height, activity_level = data
+        weight = float(weight)
+        height = float(height) / 100  # convert cm to m
+
+        # Calculate BMI
+        bmi = round(weight / (height ** 2), 2)
+
+        # Estimate calories (simple formula)
+        activity_factors = {
+            'low': 30,
+            'medium': 35,
+            'high': 40
+        }
+        calories = round(weight * activity_factors.get(activity_level, 35))
+
+        return render_template('profile_result.html', bmi=bmi, calories=calories)
+
+    return "Health profile not found."
 
 if __name__ == '__main__':
     create_db()
