@@ -7,12 +7,15 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-db_path = os.path.join(BASE_DIR, "database", "main.db")
+db_path = os.path.join(BASE_DIR, "database", "main.db")  # Main database
 
-def create_db():
+# Create tables (users, ingredients, saved_recipes)
+def create_tables():
     conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
-    cursor.execute('''
+    c = conn.cursor()
+
+    # Create users table
+    c.execute('''
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
@@ -20,7 +23,9 @@ def create_db():
             password TEXT NOT NULL
         )
     ''')
-    cursor.execute('''
+
+    # Create ingredients table
+    c.execute('''
         CREATE TABLE IF NOT EXISTS ingredients (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL UNIQUE,
@@ -28,10 +33,23 @@ def create_db():
             quantity INTEGER DEFAULT 0
         )
     ''')
+
+    # Create saved_recipes table (to save recipes for users)
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS saved_recipes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            recipe_name TEXT,
+            ingredients TEXT,
+            instructions TEXT,
+            FOREIGN KEY(user_id) REFERENCES users(id)
+        )
+    ''')
+
     conn.commit()
     conn.close()
 
-create_db()
+create_tables()
 print("✅ Database and tables created successfully.")
 
 @app.route('/')
@@ -93,7 +111,7 @@ def home():
     if 'user_name' in session:
         return render_template('home.html', user=session['user_name'])
     else:
-        flash("⚠️ Please login first.", "warning")
+        flash("⚠ Please login first.", "warning")
         return redirect(url_for('login'))
 
 @app.route('/ingredients')
@@ -188,22 +206,71 @@ def view_cart():
     total_items = 0
     for ing in ingredients:
         quantity_in_cart = cart[str(ing[0])]
+        
+        # Ensure the length check for ing and assign quantity
+        if len(ing) > 3:
+            quantity = ing[3]
+        else:
+            quantity = 0  # or some default value
+        
         cart_items.append({
             "id": ing[0],
             "name": ing[1],
             "option": ing[2] if ing[2] else "No option",
-            "quantity": ing[3],
+            "quantity": quantity,
             "count": quantity_in_cart
         })
         total_items += quantity_in_cart
 
     return render_template('cart.html', cart_items=cart_items, total=total_items)
 
+@app.route('/recipe')
+def recipe_page():
+    recipes = [
+        {
+            'name': 'Chicken Lettuce Wrap',
+            'ingredients': ['Chicken', 'Lettuce', 'Mayonnaise', 'Pepper', 'Cucumber'],
+            'instructions': 'Mix all ingredients and wrap them in lettuce leaves. Enjoy!'
+        },
+        {
+            'name': 'Chicken Salad',
+            'ingredients': ['Chicken', 'Lettuce', 'Mayonnaise', 'Pepper', 'Cucumber'],
+            'instructions': 'Combine all ingredients in a bowl and toss together.'
+        }
+    ]
+    print(recipes)  # Check the contents of recipes
+    return render_template('recipe.html', recipes=recipes)
+
+
 @app.route('/clear_cart')
 def clear_cart():
-    session.pop('cart', None)
-    flash("🗑️ Cart cleared.", "info")
-    return redirect(url_for('show_ingredients'))
+    session.pop('cart', None)  # Clear the cart from the session
+    flash("🛒 Cart has been cleared.", "info")
+    return redirect(url_for('view_cart'))
+
+
+@app.route('/save_recipe', methods=['POST'])
+def save_recipe():
+    if 'user_id' not in session:
+        flash("You need to log in to save a recipe.", "warning")
+        return redirect(url_for('login_page'))
+
+    user_id = session['user_id']
+    recipe_name = request.form['recipe_name']
+    ingredients = request.form['ingredients']
+    instructions = request.form['instructions']
+
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+    c.execute('''
+        INSERT INTO saved_recipes (user_id, recipe_name, ingredients, instructions)
+        VALUES (?, ?, ?, ?)
+    ''', (user_id, recipe_name, ingredients, instructions))
+    conn.commit()
+    conn.close()
+
+    flash("Recipe saved successfully!", "success")
+    return redirect(url_for('recipe_page'))  # Redirect back to the recipe page
 
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
@@ -280,5 +347,5 @@ def profile_result():
     return "Health profile not found."
 
 if __name__ == '__main__':
-    create_db()
+    create_tables()
     app.run(debug=True)
