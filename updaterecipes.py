@@ -1,14 +1,20 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, session
 import sqlite3
 
 app = Flask(__name__)  
+
+app.secret_key = 'your_secret_key'
+
+@app.before_request
+def mock_login():
+    session['username'] = 'GuestUser'
 
 #ingredients form bar
 @app.route('/', methods=['GET', 'POST'])
 def index():
     recipes = []
     if request.method == 'POST':
-        user_ingredients = request.form.get('ingredients', '').lower().split(', ')
+        user_ingredients = [i.strip().lower() for i in request.form.get('ingredients', '').split(',')]
         min_match = int(request.form.get('min_match', 1))
         meal_type = request.form.get('meal_type', '')
         diet = request.form.get('diet', '')
@@ -62,10 +68,19 @@ def get_matching_recipes(user_ingredients, min_match=1, meal_type='', diet=''):
                 'missing_count': missing_count,
                 'missing_ingredients': missing,
                 'steps': recipe['steps'],  
-                'cooking_time': recipe['cooking_time']
+                'cooking_time': recipe['cooking_time'],
+                'image_url': recipe['image_url']
+
             })
 
     #sort recipes by most matched ingredients with leasr missing ingredients
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    for recipe in enriched_recipes:
+        cursor.execute('SELECT username, rating, comment, timestamp FROM comments WHERE recipe_id = ? ORDER BY timestamp DESC', (recipe['id'],))
+        recipe['comments'] = cursor.fetchall()
+    conn.close()
+
     enriched_recipes.sort(key=lambda r: (-r['matches'], r['missing_count']))
     return enriched_recipes
 
@@ -116,6 +131,24 @@ def meal_plan():
             weekly_plan.append(day_plan)
 
     return render_template('meal_plan.html', weekly_plan=weekly_plan)
+
+@app.route('/comment', methods=['POST'])
+def submit_comment():
+    recipe_id = request.form['recipe_id']
+    username = request.form['username']
+    rating = int(request.form['rating'])
+    comment = request.form['comment']
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        'INSERT INTO comments (recipe_id, username, rating, comment, timestamp) VALUES (?, ?, ?, ?, datetime("now"))',
+        (recipe_id, username, rating, comment)
+    )
+    conn.commit()
+    conn.close()
+
+    return redirect('/')
 
 if __name__ == '__main__':
     app.run(debug=True)

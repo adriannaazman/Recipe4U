@@ -1,0 +1,207 @@
+
+.navbar {
+    position: fixed;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    padding: 0 1.5rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.nav-left .logo {
+    max-width: 100px; 
+    height: auto;
+}
+
+.nav-center a {
+    margin: 0 15px;
+    text-decoration: none;
+    color: #f26522;
+    font-weight: 500;
+    font-size: 1.1rem;
+    padding: 5px 0;
+}
+
+.nav-right .user-icon {
+    width: 3rem;
+    height: auto;
+    vertical-align: middle;
+    display: inline-block;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+input[type="text"],
+select {
+    width: 300px;
+    max-width: 90%;
+    padding: 10px;
+    margin: 10px auto;
+    display: block;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    font-size: 16px;
+    background-color: white;
+}
+
+input[type="submit"] {
+    padding: 10px 20px;
+    margin: 20px auto;
+    display: block;
+    background-color: #f26522;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease;
+}
+
+input[type="submit"]:hover {
+    background-color: #d2541b;
+}
+
+input[type="number"] {
+    width: 300px;
+    max-width: 90%;
+    padding: 10px;
+    margin: 10px auto;
+    display: block;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    font-size: 16px;
+    background-color: white;
+}
+
+.form-wrapper {
+     display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 40px auto;
+    max-width: 500px;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-wrapper form label {
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-weight: bold;
+    width: 100%;
+    text-align: left;
+}
+
+.form-wrapper input[type="submit"] {
+    margin-top: 20px;
+    padding: 12px 20px;
+    background-color: #f26522;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+.form-wrapper input[type="submit"]:hover {
+    background-color: #d2541b;
+}
+
+.meal-plan-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.meal-table {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 600px;
+    overflow-x: auto;
+}
+
+.meal-table h3 {
+    text-align: center;
+    margin-bottom: 15px;
+    color: #f26522;
+}
+
+.meal-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+.meal-table th, .meal-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+    vertical-align: top;
+}
+
+.meal-table th {
+    background-color: #f26522;
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .meal-table {
+        max-width: 100%;
+    }
+
+    .meal-table table, .meal-table thead, .meal-table tbody, .meal-table th, .meal-table td, .meal-table tr {
+        display: block;
+    }
+
+    .meal-table thead {
+        display: none;
+    }
+
+    .meal-table td {
+        position: relative;
+        padding-left: 50%;
+    }
+
+    .meal-table td::before {
+        position: absolute;
+        left: 10px;
+        width: 45%;
+        white-space: nowrap;
+        font-weight: bold;
+    }
+
+    .meal-table td:nth-of-type(1)::before { content: "Meal"; }
+    .meal-table td:nth-of-type(2)::before { content: "Recipe"; }
+    .meal-table td:nth-of-type(3)::before { content: "Matched Ingredients"; }
+    .meal-table td:nth-of-type(4)::before { content: "Missing Ingredients"; }
+    .meal-table td:nth-of-type(5)::before { content: "Diet"; }
+}
+
+.missing-ingredient {
+    background-color: #ffe6e6;
+    color: #cc0000;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 5px;
+    display: inline-block;
+    margin: 2px;
+}
