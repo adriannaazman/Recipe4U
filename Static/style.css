@@ -1,4 +1,3 @@
-/* Apply full-page background */
 html, body {
     margin: 0;
     padding: 0;
@@ -9,7 +8,6 @@ html, body {
 }
 
 
-/* Navbar and Logo Section */
 
 .navbar {
     display: flex;
@@ -43,7 +41,7 @@ html, body {
     color: white;
 }
 
-/* Shared container style  */
+
 
 .container, .form-container {
     background: rgba(255, 255, 255, 0.9);
@@ -55,13 +53,13 @@ html, body {
     box-shadow: 0 0 10px rgba(0,0,0,0.2);
 }
 
-/* Headings */
+
 h1, h2 {
     margin-bottom: 20px;
     color: #333;
 }
 
-/* Form input styles */
+
 input[type="text"],
 input[type="email"],
 input[type="password"] {
@@ -73,7 +71,6 @@ input[type="password"] {
     box-sizing: border-box;
 }
 
-/* Submit button */
 input[type="submit"] {
     width: 95%;
     background-color: #4CAF50;
@@ -94,7 +91,7 @@ a {
     text-decoration: none;
 }
 
-/* Alert messages */
+
 .alert.success {
     background-color: #d4edda;
     color: #155724;
@@ -112,7 +109,6 @@ a {
 }
 
 
-/* Home page custom section */
 
 .home-page {
     height: 100vh;
@@ -129,7 +125,7 @@ a {
     text-align: center;
 }
 
-/* Buttons on home page */
+
 .home-buttons .btn {
     display: inline-block;
     padding: 12px 25px;
@@ -154,12 +150,12 @@ a {
     background-color: #d32f2f;
 }
 
-/* New class for health profile button - Added Here */
+
 .btn-health-profile { 
     display: inline-block;
-    margin-top: 20px; /* Adjust as needed */
+    margin-top: 20px; 
     padding: 12px 25px;
-    background-color: #007bff; /* Example color for the button */
+    background-color: #007bff; 
     color: white;
     text-decoration: none;
     border-radius: 10px;
@@ -171,120 +167,6 @@ a {
 .btn-health-profile:hover {
     background-color: #0056b3; /* Darker shade on hover */
 }
-
-/* View Ingredients button style */
-.view-ingredients-btn {
-    display: inline-block;
-    background-color: #ff7f50;
-    color: white;
-    padding: 10px 20px;
-    margin: 20px auto;
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
-    text-decoration: none;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-}
-
-.view-ingredients-btn:hover {
-    background-color: #ff4500;
-}
-
-/* Fixing Ingredients Page Display  */
-
-.ingredient-page-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 40px 20px;
-    min-height: 100vh;
-}
-
-.ingredient-list {
-    background-color: rgba(255, 250, 240, 0.9); /* Light background (off-white) */
-    padding: 30px;
-    border-radius: 20px;
-    max-width: 700px;
-    width: 100%;
-    color: #333;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-}
-
-.ingredient-list li {
-    padding: 10px 0;
-    border-bottom: 1px solid #ccc;
-}
-
-.ingredient-list li:last-child {
-    border-bottom: none;
-}
-
-/* Ingredient Detail & Cart Styling */
-
-
-.page-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 60px 20px;
-    min-height: 100vh;
-}
-
-.content-box {
-    background-color: rgba(255, 255, 255, 0.95);
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-    max-width: 600px;
-    width: 90%;
-    color: #333;
-}
-
-.content-box h1 {
-    margin-bottom: 20px;
-    color: #333;
-    text-align: center;
-}
-
-.content-box ul {
-    list-style: none;
-    padding-left: 0;
-}
-
-.content-box li {
-    padding: 12px;
-    border-bottom: 1px solid #ddd;
-    font-size: 16px;
-}
-
-.content-box li:last-child {
-    border-bottom: none;
-}
-
-.content-box strong {
-    color: #333;
-}
-
-.btn-green {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 22px;
-    border: none;
-    border-radius: 25px;
-    margin: 10px auto;
-    font-size: 15px;
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
-    transition: background-color 0.3s ease;
-    text-align: center;
-}
-
-.btn-green:hover {
-    background-color: #388e3c;
-}
-/* Health Profile Form Styling */
 
 
 .health-form-container {
@@ -330,7 +212,7 @@ a {
 }
 
 
-/* Health Profile Result Page   */
+
 
 .profile-result-container {
     background-color: rgba(255, 255, 255, 0.9);

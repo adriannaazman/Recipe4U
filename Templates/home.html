@@ -59,36 +59,6 @@
             margin-right: 10px; /* Add some space if there are other buttons */
         }
 
-        .btn-ingredients {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 12px 25px;
-            background-color: #4caf50;
-            color: white;
-            text-decoration: none;
-            border-radius: 10px;
-            font-weight: bold;
-        }
-
-        .recipes {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-top: 30px;
-        }
-
-        .recipe-card {
-            background-color: #fff8f0;
-            padding: 15px;
-            border-radius: 12px;
-            width: 40%;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .recipe-card h4 {
-            margin-top: 0;
-        }
     </style>
 </head>
 <body>
@@ -103,7 +73,6 @@
         
         <a href="{{ url_for('health_profile') }}" class="btn-health-profile">Fill/Update Your Health Profile</a>
 
-        <a href="{{ url_for('show_ingredients') }}" class="btn-ingredients">View Ingredients</a>
 
 
         <h3 style="margin-top: 40px;">Featured Recipes</h3>
