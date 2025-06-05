@@ -1,0 +1,100 @@
+
+{% extends "layout.html" %}
+{% block content %}
+
+<h1 style="text-align: center;">Find Recipes Based on Your Ingredients!</h1>
+
+<div class="form-wrapper">
+<form method="POST">
+    <label>Enter Your Ingredients (comma-separated):</label>
+    <input type="text" name="ingredients" required>
+
+    <label for="min_match">Minimum Ingredient Match:</label>
+    <input type="number" name="min_match" value="1" min="1">
+
+    <label>Meal Type:</label>
+    <select name="meal_type" id="meal_type">
+        <option value="">Any</option>
+        <option value="breakfast">Breakfast</option>
+        <option value="lunch">Lunch</option>
+        <option value="dinner">Dinner</option>
+    </select>
+
+    <label for="diet">Diet:</label>
+    <select name="diet" id="diet">
+        <option value="">Any</option>
+        <option value="vegan">Vegan</option>
+        <option value="vegetarian">Vegetarian</option>
+        <option value="gluten-free">Gluten-Free</option>
+    </select>
+
+    <button type="submit">Search</button>
+</form>
+</div>
+
+{% for recipe in recipes %}
+    <div class="recipe-card">
+        <h2>{{ recipe.name }}</h2>
+
+        {% if recipe.image_url %}
+            <img src="{{ recipe.image_url }}" alt="{{ recipe.name }}" width="300" height="200" style="object-fit: cover; border-radius: 10px; margin-bottom: 10px;">
+        {% endif %}
+
+        <p><strong>Ingredients:</strong> {{ recipe.ingredients }}</p>
+        <p><strong>Matched ingredients:</strong> {{ recipe.matches }}</p>
+        <p><strong>Missing ingredients ({{ recipe.missing_count }}):</strong>
+            {% if recipe.missing_count > 0 %}
+                {% for item in recipe.missing_ingredients %}
+                    <span class="missing-ingredient">{{ item }}</span>
+                {% endfor %}
+            {% else %}
+                    <span style="color: green; font-weight: bold;">None</span>
+             {% endif %}
+        </p>
+        <p><strong>Meal Type:</strong> {{ recipe.meal_type }}</p>
+        <p><strong>Diet:</strong> {{ recipe.diet }}</p>
+        <p><strong>Cooking Time:</strong> {{ recipe.cooking_time }} mins</p>
+        <p><strong>Steps:</strong> {{ recipe.steps }}</p>
+
+    <div class="comment-section">
+        <h3>Leave a Comment & Rating</h3>
+
+    {% if session.get('username') %}
+        <form action="/comment" method="POST">
+            <input type="hidden" name="recipe_id" value="{{ recipe.id }}">
+            <input type="hidden" name="username" value="{{ session.get('username') }}">
+
+            <label for="rating">Rating (1-5):</label>
+            <input type="number" name="rating" min="1" max="5" required>
+
+            <label for="comment">Comment:</label>
+            <textarea name="comment" rows="3" required></textarea>
+
+            <button type="submit">Submit</button>
+        </form>
+    {% else %}
+        <p><em>You must be logged in to leave a comment and rating.</em></p>
+    {% endif %}
+    </div>
+
+    {% if recipe.comments %}
+        <div class="existing-comments">
+            <h4>Comments:</h4>
+            {% for comment in recipe.comments %}
+                <div class="single-comment">
+                    <strong>{{ comment.username }}</strong> rated <strong>{{ comment.rating }}/5</strong><br>
+                    <em>{{ comment.comment }}</em><br>
+                    <small>{{ comment.timestamp }}</small>
+                </div>
+            {% endfor %}
+       </div>
+    {% else %}
+            <p>No comments yet.</p>
+    {% endif %}
+</div>
+
+{% endfor %}
+
+{% endblock %}
+
+
