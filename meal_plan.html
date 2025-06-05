@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<h1>Generate Your Weekly Meal Plan</h1>
+
+<form action="/meal_plan" method="post">
+    <label>Enter your ingredients (comma separated):</label><br>
+    <input type="text" name="ingredients" placeholder="e.g. egg, milk, onion"><br><br>
+
+    <label>Number of Days:</label>
+    <input type="number" name="num_days" value="7" min="1" max="14"><br><br>
+
+    <input type="submit" value="Generate Weekly Meal Plan">
+</form>
+
+{% if weekly_plan %}
+    <h2>Weekly Meal Plan</h2>
+        <div class="meal-plan-container">
+            {% for day in weekly_plan %}
+                <div class="meal-table">
+                    <h2>{{ day.day }}</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Meal</th>
+                                <th>Recipe</th>
+                                <th>Matched Ingredients</th>
+                                <th>Missing Ingredients</th>
+                                <th>Diet</th>
+                            </tr>
+                        </thead>
+
+    <tbody>
+        {% for meal in ['breakfast', 'lunch', 'dinner'] %}
+        <tr>
+            <td>{{ meal.title() }}</td>
+            {% if day[meal] %}
+                <td>{{ day[meal].name }}</td>
+                <td>{{ day[meal].matched | join(', ') }}</td>
+                <td>
+                    {% if day[meal].missing_count > 0 %}
+                            {{ day[meal].missing | join(', ') }}
+                    {% else %}
+                            None
+                    {% endif %}
+
+                </td>
+
+                <td>{{ day[meal].diet }}</td>
+                    {% else %}
+                                    <td colspan="4">No available recipe</td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% endblock %}
