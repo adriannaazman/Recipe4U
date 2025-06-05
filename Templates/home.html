@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home - Recipe4U</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+
+    <style>
+        body {
+            background-image: url('{{ url_for('static', filename='back.jpeg') }}');
+            background-size: cover;
+            background-position: center;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 80px;
+            height: auto;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            background-color: #ff4d4d;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+        }
+
+        .home-container {
+            max-width: 800px;
+            margin: 100px auto;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 10px;
+        }
+
+        .btn-health-profile { /* New class for health profile button */
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 25px;
+            background-color: #007bff; /* Example color for the button */
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: bold;
+            margin-right: 10px; /* Add some space if there are other buttons */
+        }
+
+    </style>
+</head>
+<body>
+
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="Recipe4U Logo" class="logo">
+
+    <a href="/logout" class="logout-btn">Logout</a>
+
+    <div class="home-container">
+        <h2>~Welcome {{ user }} to Recipe4U~</h2>
+        <p>Ready to explore delicious recipes today?</p>
+        
+        <a href="{{ url_for('health_profile') }}" class="btn-health-profile">Fill/Update Your Health Profile</a>
+
+
+
+        <h3 style="margin-top: 40px;">Featured Recipes</h3>
+        <div class="recipes">
+            <div class="recipe-card">
+                <h4>Spaghetti Bolognese</h4>
+                <p>A classic Italian pasta dish made with rich tomato and meat sauce.</p>
+            </div>
+            <div class="recipe-card">
+                <h4>Fresh Avocado Salad</h4>
+                <p>Healthy and refreshing, made with avocado, cucumber, and lime.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

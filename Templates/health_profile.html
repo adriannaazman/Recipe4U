@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Your Health Profile</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Tell Us About Yourself</h2>
+        <form method="POST">
+            <input type="number" name="age" placeholder="Age" required><br>
+            <input type="number" name="weight" step="0.1" placeholder="Weight (kg)" required><br>
+            <input type="number" name="height" step="0.1" placeholder="Height (cm)" required><br>
+            <select name="activity_level" required>
+                <option value="">-- Activity Level --</option>
+                <option value="sedentary">Sedentary</option>
+                <option value="light">Lightly Active</option>
+                <option value="moderate">Moderately Active</option>
+                <option value="active">Very Active</option>
+            </select><br><br>
+            <input type="submit" value="Save and Continue">
+        </form>
+        <br>
+        <a href="{{ url_for('home') }}">Back to Home</a>
+    </div>
+</body>
+</html>

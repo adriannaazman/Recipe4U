@@ -1,0 +1,221 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: Arial, sans-serif;
+    background: url("/static/back.jpeg") no-repeat center center fixed;
+    background-size: cover;
+}
+
+
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 10px 30px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.logo img {
+    height: 50px;
+    border-radius: 10px;
+}
+
+.nav-links a {
+    margin: 0 15px;
+    color: #333;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 20px;
+    transition: background-color 0.3s;
+}
+
+.nav-links a:hover {
+    background-color: #ff7f50;
+    color: white;
+}
+
+
+
+.container, .form-container {
+    background: rgba(255, 255, 255, 0.9);
+    max-width: 400px;
+    margin: 60px auto;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+
+h1, h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    width: 90%;
+    padding: 12px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+input[type="submit"] {
+    width: 95%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px;
+    margin-top: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+input[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+a {
+    color: #4CAF50;
+    text-decoration: none;
+}
+
+
+.alert.success {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.alert.danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+
+
+.home-page {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.overlay {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    text-align: center;
+}
+
+
+.home-buttons .btn {
+    display: inline-block;
+    padding: 12px 25px;
+    margin: 10px;
+    background-color: #ff7f50;
+    color: white;
+    text-decoration: none;
+    font-size: 1em;
+    border-radius: 30px;
+    transition: background-color 0.3s ease;
+}
+
+.home-buttons .btn:hover {
+    background-color: #ff4500;
+}
+
+.home-buttons .logout {
+    background-color: #f44336;
+}
+
+.home-buttons .logout:hover {
+    background-color: #d32f2f;
+}
+
+
+.btn-health-profile { 
+    display: inline-block;
+    margin-top: 20px; 
+    padding: 12px 25px;
+    background-color: #007bff; 
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: bold;
+    margin-right: 10px; /* Add some space if there are other buttons */
+    transition: background-color 0.3s ease;
+}
+
+.btn-health-profile:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+}
+
+
+.health-form-container {
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 30px;
+    border-radius: 20px;
+    max-width: 500px;
+    margin: 60px auto;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    text-align: center;
+}
+
+.health-form-container h2 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.health-form-container input[type="number"],
+.health-form-container select {
+    width: 90%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+.health-form-container input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px;
+    width: 95%;
+    margin-top: 15px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.health-form-container input[type="submit"]:hover {
+    background-color: #388e3c;
+}
+
+
+
+
+.profile-result-container {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 20px;
+}
