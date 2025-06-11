@@ -59,22 +59,24 @@
     <div class="comment-section">
         <h3>Leave a Comment & Rating</h3>
 
-    {% if session.get('username') %}
-        <form action="/comment" method="POST">
-            <input type="hidden" name="recipe_id" value="{{ recipe.id }}">
-            <input type="hidden" name="username" value="{{ session.get('username') }}">
+        {% if session.get('user_id') %}
+            <form action="/comment" method="POST">
+                <input type="hidden" name="recipe_id" value="{{ recipe.id }}">
+        
+                <label for="rating">Rating (1–5):</label>
+                <input type="number" name="rating" min="1" max="5" required>
+                <br>
 
-            <label for="rating">Rating (1-5):</label>
-            <input type="number" name="rating" min="1" max="5" required>
+                <label for="comment">Comment:</label>
+                <textarea name="comment" rows="3" required></textarea>
+                <br>
 
-            <label for="comment">Comment:</label>
-            <textarea name="comment" rows="3" required></textarea>
+                <button type="submit">Submit Comment</button>
+            </form>
+        {% else %}
+            <p><a href="{{ url_for('login') }}">Log in</a> to leave a comment or rating.</p>
+        {% endif %}
 
-            <button type="submit">Submit</button>
-        </form>
-    {% else %}
-        <p><em>You must be logged in to leave a comment and rating.</em></p>
-    {% endif %}
     </div>
 
     {% if recipe.comments %}

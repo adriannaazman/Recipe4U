@@ -1,13 +1,63 @@
-from flask import Flask, render_template, request, redirect, session
+import os
 import sqlite3
+from flask import Flask, render_template, request, redirect, url_for, flash, session
+from werkzeug.security import generate_password_hash, check_password_hash
+from collections import defaultdict
 
 app = Flask(__name__)  
-
 app.secret_key = 'your_secret_key'
 
-@app.before_request
-def mock_login():
-    session['username'] = 'GuestUser'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+db_path = os.path.join(BASE_DIR, "database", "main.db")
+
+#make sure database and tables are created
+def create_db():
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        email TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL
+    )''')
+    cursor.execute('''CREATE TABLE IF NOT EXISTS ingredients (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL UNIQUE,
+        option TEXT,
+        quantity INTEGER DEFAULT 0
+    )''')
+    cursor.execute('''CREATE TABLE IF NOT EXISTS health_profile (
+        user_id INTEGER,
+        age INTEGER,
+        weight REAL,
+        height REAL,
+        activity_level TEXT,
+        PRIMARY KEY(user_id),
+        FOREIGN KEY(user_id) REFERENCES users(id)
+    )''')
+    cursor.execute('''CREATE TABLE IF NOT EXISTS comments (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        recipe_id INTEGER,
+        username TEXT,
+        rating INTEGER,
+        comment TEXT,
+        timestamp TEXT
+    )''')
+    conn.commit()
+    conn.close()
+
+create_db()
+
+#User database connection (main.db)
+def get_user_db_connection():
+    db_path = os.path.join(BASE_DIR, "database", "main.db")
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+@app.route('/welcome')
+def welcome():
+    return render_template('index.html')
 
 #ingredients form bar
 @app.route('/', methods=['GET', 'POST'])
@@ -134,8 +184,12 @@ def meal_plan():
 
 @app.route('/comment', methods=['POST'])
 def submit_comment():
+    if 'user_id' not in session:
+        flash("⚠️ You must be logged in to comment.", "warning")
+        return redirect(url_for('login'))
+
     recipe_id = request.form['recipe_id']
-    username = request.form['username']
+    username = session['user_name']  #this is take from session, not form
     rating = int(request.form['rating'])
     comment = request.form['comment']
 
@@ -148,7 +202,149 @@ def submit_comment():
     conn.commit()
     conn.close()
 
+    flash("✅ Comment submitted successfully!", "success")
     return redirect('/')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        password = request.form['password']
+        hashed_password = generate_password_hash(password)
+
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+
+        try:
+            cursor.execute("INSERT INTO users (name, email, password) VALUES (?, ?, ?)", (name, email, hashed_password))
+            conn.commit()
+            flash("✅ Registered successfully! Please login.", "success")
+            return redirect(url_for('login'))
+        except sqlite3.IntegrityError:
+            flash("❌ Email already exists!", "danger")
+        finally:
+            conn.close()
+    return render_template('register.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+
+        conn = sqlite3.connect(db_path)
+        c = conn.cursor()
+        c.execute("SELECT * FROM users WHERE email=?", (email,))
+        user = c.fetchone()
+        conn.close()
+
+        if user and check_password_hash(user[3], password):
+            session['user_id'] = user[0]
+            session['user_name'] = user[1]
+            flash("✅ Login successful!", "success")
+            return redirect(url_for('index'))
+        else:
+            flash("❌ Incorrect email or password.", "danger")
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash("You have been logged out.", "info")
+    return redirect(url_for('login'))
+
+@app.route('/home')
+def home():
+    if 'user_name' in session:
+        return render_template('home.html', user=session['user_name'])
+    else:
+        flash("⚠️ Please login first.", "warning")
+        return redirect(url_for('login'))
+
+@app.route('/account')
+def account():
+    if 'user_id' in session:
+        return render_template('settings.html', user_name=session['user_name'])
+    else:
+        return redirect(url_for('login'))
+    
+@app.route('/change_password', methods=['GET', 'POST'])
+def change_password():
+    if 'user_id' not in session:
+        flash("Please log in to change your password.", "warning")
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        current = request.form['current_password']
+        new = request.form['new_password']
+
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        cursor.execute("SELECT password FROM users WHERE id = ?", (session['user_id'],))
+        user = cursor.fetchone()
+
+        if user and check_password_hash(user[0], current):
+            new_hash = generate_password_hash(new)
+            cursor.execute("UPDATE users SET password = ? WHERE id = ?", (new_hash, session['user_id']))
+            conn.commit()
+            flash("✅ Password changed successfully.", "success")
+        else:
+            flash("❌ Current password is incorrect.", "danger")
+
+        conn.close()
+    return render_template('change_password.html')
+
+@app.route('/delete_account', methods=['POST'])
+def delete_account():
+    if 'user_id' in session:
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM users WHERE id = ?", (session['user_id'],))
+        cursor.execute("DELETE FROM health_profile WHERE user_id = ?", (session['user_id'],))
+        conn.commit()
+        conn.close()
+        session.clear()
+        flash("❌ Account deleted successfully.", "info")
+        return redirect(url_for('register'))
+    else:
+        flash("⚠️ Login required.", "warning")
+        return redirect(url_for('login'))
+
+@app.route('/profile', methods=['GET', 'POST'])
+def profile():
+    if request.method == 'POST':
+        age = int(request.form['age'])
+        weight = float(request.form['weight'])
+        height = float(request.form['height'])
+        activity = request.form['activity']
+
+        bmi = round(weight / ((height / 100) ** 2), 2)
+        calories = weight * (25 if activity == 'low' else 30 if activity == 'medium' else 35)
+
+        return render_template('profile_result.html', bmi=bmi, calories=calories)
+    return render_template('profile_form.html')
+
+@app.route('/bmi', methods=['GET', 'POST'])
+def bmi_calculator():
+    bmi = None
+    calories = None
+
+    if request.method == 'POST':
+        age = int(request.form['age'])
+        weight = float(request.form['weight'])
+        height = float(request.form['height'])
+        activity = request.form['activity_level']
+
+        bmi = round(weight / ((height / 100) ** 2), 2)
+        calories = round(weight * {
+            'sedentary': 25,
+            'light': 30,
+            'moderate': 35,
+            'active': 40
+        }.get(activity, 30))
+
+    return render_template('health_profile.html', bmi=bmi, calories=calories)
 
 if __name__ == '__main__':
     app.run(debug=True)

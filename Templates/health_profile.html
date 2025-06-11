@@ -8,20 +8,31 @@
     <div class="container">
         <h2>Tell Us About Yourself</h2>
         <form method="POST">
-            <input type="number" name="age" placeholder="Age" required><br>
-            <input type="number" name="weight" step="0.1" placeholder="Weight (kg)" required><br>
-            <input type="number" name="height" step="0.1" placeholder="Height (cm)" required><br>
+            <input type="number" name="age" placeholder="Age" value="{{ request.form.age or '' }}" required><br>
+            <input type="number" name="weight" step="0.1" placeholder="Weight (kg)" value="{{ request.form.age or '' }}" required><br>
+            <input type="number" name="height" step="0.1" placeholder="Height (cm)" value="{{ request.form.height or '' }}" required><br>
+            
             <select name="activity_level" required>
                 <option value="">-- Activity Level --</option>
-                <option value="sedentary">Sedentary</option>
-                <option value="light">Lightly Active</option>
-                <option value="moderate">Moderately Active</option>
-                <option value="active">Very Active</option>
+                <option value="sedentary" {% if request.form.activity_level == 'sedentary' %}selected{% endif %}>Sedentary</option>
+                <option value="light" {% if request.form.activity_level == 'light' %}selected{% endif %}>Lightly Active</option>
+                <option value="moderate" {% if request.form.activity_level == 'moderate' %}selected{% endif %}>Moderately Active</option>
+                <option value="active" {% if request.form.activity_level == 'active' %}selected{% endif %}>Very Active</option>
             </select><br><br>
-            <input type="submit" value="Save and Continue">
+
+            <input type="submit" value="Calculate">
         </form>
+
+        {% if bmi and calories %}
+            <div class="result">
+                <h3>Results</h3>
+                <p><strong>BMI:</strong> {{ bmi }}</p>
+                <p><strong>Recommended Daily Calories:</strong> {{ calories }} kcal</p>
+            </div>
+        {% endif %}
+
         <br>
-        <a href="{{ url_for('home') }}">Back to Home</a>
+        <a href="/">Back to Home</a>
     </div>
 </body>
 </html>
