@@ -227,6 +227,30 @@ def register():
             conn.close()
     return render_template('register.html')
 
+@app.route('/forgot_password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = request.form['email']
+        new_password = request.form['new_password']
+        hashed_password = generate_password_hash(new_password)
+
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM users WHERE email=?", (email,))
+        user = cursor.fetchone()
+
+        if user:
+            cursor.execute("UPDATE users SET password=? WHERE email=?", (hashed_password, email))
+            conn.commit()
+            conn.close()
+            flash("✅ Password reset successful! Please log in with your new password.", "success")
+            return redirect(url_for('login'))
+        else:
+            conn.close()
+            flash("❌ Email not found in our records.", "danger")
+
+    return render_template('forgot_password.html')
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -248,6 +272,31 @@ def login():
             flash("❌ Incorrect email or password.", "danger")
     return render_template('login.html')
 
+@app.route('/delete_account', methods=['GET', 'POST'])
+def delete_account():
+    if 'user_id' not in session:
+        flash("❌ Please log in to delete your account.", "danger")
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        user_id = session['user_id']
+
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+
+        
+        cursor.execute("DELETE FROM users WHERE id = ?", (user_id,))
+
+        cursor.execute("DELETE FROM health_profile WHERE user_id = ?", (user_id,))
+
+        conn.commit()
+        conn.close()
+
+        session.clear()
+        flash("✅ Your account has been deleted successfully.", "success")
+        return redirect(url_for('register'))  
+    return render_template('delete_account.html')
+
 @app.route('/logout')
 def logout():
     session.clear()
@@ -261,56 +310,7 @@ def home():
     else:
         flash("⚠️ Please login first.", "warning")
         return redirect(url_for('login'))
-
-@app.route('/account')
-def account():
-    if 'user_id' in session:
-        return render_template('settings.html', user_name=session['user_name'])
-    else:
-        return redirect(url_for('login'))
     
-@app.route('/change_password', methods=['GET', 'POST'])
-def change_password():
-    if 'user_id' not in session:
-        flash("Please log in to change your password.", "warning")
-        return redirect(url_for('login'))
-
-    if request.method == 'POST':
-        current = request.form['current_password']
-        new = request.form['new_password']
-
-        conn = sqlite3.connect(db_path)
-        cursor = conn.cursor()
-        cursor.execute("SELECT password FROM users WHERE id = ?", (session['user_id'],))
-        user = cursor.fetchone()
-
-        if user and check_password_hash(user[0], current):
-            new_hash = generate_password_hash(new)
-            cursor.execute("UPDATE users SET password = ? WHERE id = ?", (new_hash, session['user_id']))
-            conn.commit()
-            flash("✅ Password changed successfully.", "success")
-        else:
-            flash("❌ Current password is incorrect.", "danger")
-
-        conn.close()
-    return render_template('change_password.html')
-
-@app.route('/delete_account', methods=['POST'])
-def delete_account():
-    if 'user_id' in session:
-        conn = sqlite3.connect(db_path)
-        cursor = conn.cursor()
-        cursor.execute("DELETE FROM users WHERE id = ?", (session['user_id'],))
-        cursor.execute("DELETE FROM health_profile WHERE user_id = ?", (session['user_id'],))
-        conn.commit()
-        conn.close()
-        session.clear()
-        flash("❌ Account deleted successfully.", "info")
-        return redirect(url_for('register'))
-    else:
-        flash("⚠️ Login required.", "warning")
-        return redirect(url_for('login'))
-
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
     if request.method == 'POST':
@@ -348,6 +348,3 @@ def bmi_calculator():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-
-

@@ -23,6 +23,12 @@
             margin-right: 15px;
             font-weight: bold;
         }
+        .nav-right {
+             display: flex;
+             align-items: center;
+            gap: 1rem;
+       }
+
 
         nav a:hover { 
             text-decoration: underline; 
@@ -68,11 +74,19 @@
             <a href="{{ url_for('bmi_calculator') }}">BMI Calculator</a>
         </div>
 
-        <div class="nav-right">
-            <a href="{{ url_for('account') if session.get('user_id') else url_for('login') }}">
-                <img src="{{ url_for('static', filename='assets/r4u_user.png') }}" alt="User Icon" class="user-icon">
-            </a>
-        </div>
+         <div class="user-dropdown">
+    <img src="{{ url_for('static', filename='assets/r4u_user.png') }}" alt="User Icon" class="user-icon">
+    <div class="dropdown-menu">
+        {% if session.get('user_id') %}
+            <a href="{{ url_for('logout') }}">Logout</a>
+            <a href="{{ url_for('delete_account') }}">Delete Account</a>
+        {% else %}
+            <a href="{{ url_for('register') }}">Register</a>
+            <a href="{{ url_for('login') }}">Login</a>
+        {% endif %}
+    </div>
+</div>
+
     </nav>
 
     <div class="container">
