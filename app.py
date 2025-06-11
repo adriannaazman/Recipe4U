@@ -58,7 +58,7 @@ def register():
             cursor.execute("INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
                            (name, email, hashed_password))
             conn.commit()
-            flash("✅ Registered successfully! Please login.", "success")
+            
             return redirect(url_for('login'))
         except sqlite3.IntegrityError:
             flash("❌ Email already exists!", "danger")
@@ -86,6 +86,58 @@ def login():
         else:
             flash("❌ Incorrect email or password.", "danger")
     return render_template('login.html')
+
+@app.route('/forgot_password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = request.form['email']
+        new_password = request.form['new_password']
+        hashed_password = generate_password_hash(new_password)
+
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM users WHERE email=?", (email,))
+        user = cursor.fetchone()
+
+        if user:
+            cursor.execute("UPDATE users SET password=? WHERE email=?", (hashed_password, email))
+            conn.commit()
+            conn.close()
+            
+        flash("✅ Password reset successful! Please log in with your new password.", "success")
+        return redirect(url_for('login'))
+    else:
+        conn.close()
+        flash("❌ Email not found in our records.", "danger")
+
+    return render_template('forget_password.html')
+
+@app.route('/delete_account', methods=['GET', 'POST'])
+def delete_account():
+    if 'user_id' not in session:
+        flash("❌ Please log in to delete your account.", "danger")
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        user_id = session['user_id']
+
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+
+        
+        cursor.execute("DELETE FROM users WHERE id = ?", (user_id,))
+
+        cursor.execute("DELETE FROM health_profile WHERE user_id = ?", (user_id,))
+
+        conn.commit()
+        conn.close()
+
+        session.clear()
+        flash("✅ Your account has been deleted successfully.", "success")
+        return redirect(url_for('register'))  # Or index/login
+
+    return render_template('delete_account.html')
+
 
 @app.route('/logout')
 def logout():

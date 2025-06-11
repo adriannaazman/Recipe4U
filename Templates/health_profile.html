@@ -11,14 +11,13 @@
             <input type="number" name="age" placeholder="Age" required><br>
             <input type="number" name="weight" step="0.1" placeholder="Weight (kg)" required><br>
             <input type="number" name="height" step="0.1" placeholder="Height (cm)" required><br>
-            <select name="activity_level" required>
+            <select name="activity" required>
                 <option value="">-- Activity Level --</option>
-                <option value="sedentary">Sedentary</option>
-                <option value="light">Lightly Active</option>
-                <option value="moderate">Moderately Active</option>
-                <option value="active">Very Active</option>
+                <option value="low">Sedentary</option>
+                <option value="medium">Moderately Active</option>
+                <option value="high">Very Active</option>
             </select><br><br>
-            <input type="submit" value="Save and Continue">
+            <input type="submit" value="Calculate BMI and Calories">
         </form>
         <br>
         <a href="{{ url_for('home') }}">Back to Home</a>
