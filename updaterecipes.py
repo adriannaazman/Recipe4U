@@ -8,7 +8,7 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-db_path = os.path.join(BASE_DIR, "database", "main.db")
+db_path = os.path.join(BASE_DIR, "recipes_database.db")
 
 #make sure database and tables are created
 def create_db():
@@ -50,7 +50,7 @@ create_db()
 
 #User database connection (main.db)
 def get_user_db_connection():
-    db_path = os.path.join(BASE_DIR, "database", "main.db")
+    db_path = os.path.join(BASE_DIR, "database", "recipes_database.db")
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     return conn
